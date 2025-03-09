@@ -19,13 +19,11 @@ function loadQuotes() {
 // Function to fetch quotes from the server
 async function fetchQuotesFromServer() {
     try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts'); // Replace with your actual server endpoint
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
         const serverQuotes = await response.json();
-
-        // Map server quotes to match local quote structure
         return serverQuotes.map(quote => ({
             text: quote.title,
-            category: "Server Category" // Assign a default category
+            category: "Server Category"
         }));
     } catch (error) {
         console.error("Error fetching quotes from server:", error);
@@ -33,7 +31,25 @@ async function fetchQuotesFromServer() {
     }
 }
 
-// Function to sync local data with server
+// Function to post a quote to the server
+async function postQuoteToServer(quote) {
+    try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST', // Specify the request method
+            headers: {
+                'Content-Type': 'application/json' // Set the content type for JSON
+            },
+            body: JSON.stringify(quote) // Convert the quote object to JSON
+        });
+
+        const result = await response.json();
+        console.log("Quote posted to server:", result);
+    } catch (error) {
+        console.error("Error posting quote to server:", error);
+    }
+}
+
+// Sync local data with server periodically
 async function syncQuotesWithServer() {
     const serverQuotes = await fetchQuotesFromServer();
     const localQuotes = JSON.parse(localStorage.getItem('quotes') || '[]');
@@ -60,8 +76,7 @@ function notifyUser(message) {
     notification.textContent = message;
     document.body.appendChild(notification);
 
-    // Remove the notification after 5 seconds
-    setTimeout(() => document.body.removeChild(notification), 5000);
+    setTimeout(() => document.body.removeChild(notification), 5000); // Remove notification after 5 seconds
 }
 
 // Function to populate the category filter dropdown dynamically
@@ -69,7 +84,7 @@ function populateCategories() {
     const categoryFilter = document.getElementById('categoryFilter');
     categoryFilter.innerHTML = '<option value="all">All Categories</option>'; // Default option
 
-    // Use `map` to extract unique categories and populate the dropdown
+    // Extract unique categories using map and Set
     const categories = [...new Set(quotes.map(quote => quote.category))];
 
     categories.forEach(category => {
@@ -88,12 +103,10 @@ function filterQuotes() {
     const selectedCategory = document.getElementById('categoryFilter').value;
     saveFilterPreference(selectedCategory); // Save the selected filter
 
-    // Filter quotes by category or show all if "all" is selected
     const filteredQuotes = selectedCategory === 'all'
         ? quotes
         : quotes.filter(quote => quote.category === selectedCategory);
 
-    // Update the displayed quotes (show the first quote in the filtered list)
     if (filteredQuotes.length > 0) {
         const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
         const randomQuote = filteredQuotes[randomIndex];
@@ -121,9 +134,13 @@ function loadFilterPreference() {
 
 // Function to add a new quote
 function addQuote(text, category) {
-    quotes.push({ text, category });
+    const newQuote = { text, category };
+    quotes.push(newQuote);
     saveQuotes(); // Save updated quotes to Local Storage
     populateCategories(); // Update the category dropdown
+
+    // Post the new quote to the server
+    postQuoteToServer(newQuote);
 
     const feedback = document.getElementById('feedback');
     feedback.textContent = "New quote added successfully!";
