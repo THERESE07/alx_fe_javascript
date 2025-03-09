@@ -35,13 +35,12 @@ async function fetchQuotesFromServer() {
 async function postQuoteToServer(quote) {
     try {
         const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
-            method: 'POST', // Specify the request method
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/json' // Set the content type for JSON
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(quote) // Convert the quote object to JSON
+            body: JSON.stringify(quote)
         });
-
         const result = await response.json();
         console.log("Quote posted to server:", result);
     } catch (error) {
@@ -66,7 +65,7 @@ async function syncQuotesWithServer() {
     filterQuotes();
 
     // Notify user
-    notifyUser("Quotes synced with the server.");
+    notifyUser("Quotes synced with server!");
 }
 
 // Notify user function
@@ -76,15 +75,15 @@ function notifyUser(message) {
     notification.textContent = message;
     document.body.appendChild(notification);
 
-    setTimeout(() => document.body.removeChild(notification), 5000); // Remove notification after 5 seconds
+    // Remove the notification after 5 seconds
+    setTimeout(() => document.body.removeChild(notification), 5000);
 }
 
 // Function to populate the category filter dropdown dynamically
 function populateCategories() {
     const categoryFilter = document.getElementById('categoryFilter');
-    categoryFilter.innerHTML = '<option value="all">All Categories</option>'; // Default option
+    categoryFilter.innerHTML = '<option value="all">All Categories</option>';
 
-    // Extract unique categories using map and Set
     const categories = [...new Set(quotes.map(quote => quote.category))];
 
     categories.forEach(category => {
@@ -94,14 +93,13 @@ function populateCategories() {
         categoryFilter.appendChild(option);
     });
 
-    // Set the selected category based on saved preference
     categoryFilter.value = loadFilterPreference();
 }
 
 // Function to filter quotes based on the selected category
 function filterQuotes() {
     const selectedCategory = document.getElementById('categoryFilter').value;
-    saveFilterPreference(selectedCategory); // Save the selected filter
+    saveFilterPreference(selectedCategory);
 
     const filteredQuotes = selectedCategory === 'all'
         ? quotes
@@ -136,15 +134,13 @@ function loadFilterPreference() {
 function addQuote(text, category) {
     const newQuote = { text, category };
     quotes.push(newQuote);
-    saveQuotes(); // Save updated quotes to Local Storage
-    populateCategories(); // Update the category dropdown
-
-    // Post the new quote to the server
+    saveQuotes();
+    populateCategories();
     postQuoteToServer(newQuote);
 
     const feedback = document.getElementById('feedback');
     feedback.textContent = "New quote added successfully!";
-    setTimeout(() => (feedback.textContent = ""), 3000); // Clear feedback
+    setTimeout(() => (feedback.textContent = ""), 3000);
 }
 
 // Function to handle the add quote form
@@ -159,7 +155,6 @@ function createAddQuoteForm() {
 
     addQuote(newQuoteText, newQuoteCategory);
 
-    // Clear input fields
     document.getElementById('newQuoteText').value = "";
     document.getElementById('newQuoteCategory').value = "";
 }
@@ -175,5 +170,5 @@ document.addEventListener('DOMContentLoaded', () => {
     filterQuotes();
 
     // Sync periodically
-    setInterval(syncQuotesWithServer, 30000); // Sync every 30 seconds
+    setInterval(syncQuotesWithServer, 30000);
 });
