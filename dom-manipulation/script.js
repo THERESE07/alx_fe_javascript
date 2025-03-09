@@ -18,8 +18,8 @@ function showRandomQuote() {
     `;
 }
 
-// Function to add a new quote dynamically
-function addQuote() {
+// Function to handle the process of adding a new quote
+function createAddQuoteForm() {
     const newQuoteText = document.getElementById('newQuoteText').value.trim();
     const newQuoteCategory = document.getElementById('newQuoteCategory').value.trim();
 
@@ -30,7 +30,12 @@ function addQuote() {
     }
 
     // Add the new quote to the quotes array
-    quotes.push({ text: newQuoteText, category: newQuoteCategory });
+    addQuote(newQuoteText, newQuoteCategory);
+}
+
+// Helper function to add the quote to the array and update the DOM
+function addQuote(text, category) {
+    quotes.push({ text, category });
 
     // Provide feedback to the user
     const feedback = document.getElementById('feedback');
@@ -45,10 +50,10 @@ function addQuote() {
 // Event listener to display a new random quote
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
-// Event listener for adding a new quote
-document.getElementById('addQuoteButton').addEventListener('click', addQuote);
+// Event listener for the "Add Quote" button
+document.getElementById('addQuoteButton').addEventListener('click', createAddQuoteForm);
 
 // Show a random quote on initial page load
 document.addEventListener('DOMContentLoaded', () => {
-    showRandomQuote
+    showRandomQuote();
 });
