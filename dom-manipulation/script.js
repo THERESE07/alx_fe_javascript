@@ -7,18 +7,25 @@ const quotes = [
 
 // Function to display a random quote
 function showRandomQuote() {
-    const randomIndex = Math.floor(Math.random() * quotes.length); // Generate random index
+    const randomIndex = Math.floor(Math.random() * quotes.length); // Generate a random index
     const randomQuote = quotes[randomIndex];
 
-    // Update the DOM to display the quote
+    // Clear previous content in the quote display
     const quoteDisplay = document.getElementById('quoteDisplay');
-    quoteDisplay.innerHTML = `
-        <p>${randomQuote.text}</p>
-        <small>Category: ${randomQuote.category}</small>
-    `;
+    quoteDisplay.innerHTML = "";
+
+    // Create and append paragraph for the quote text
+    const quoteText = document.createElement('p');
+    quoteText.textContent = randomQuote.text;
+    quoteDisplay.appendChild(quoteText);
+
+    // Create and append a small element for the category
+    const quoteCategory = document.createElement('small');
+    quoteCategory.textContent = `Category: ${randomQuote.category}`;
+    quoteDisplay.appendChild(quoteCategory);
 }
 
-// Function to handle the process of adding a new quote
+// Function to create and process the form for adding quotes
 function createAddQuoteForm() {
     const newQuoteText = document.getElementById('newQuoteText').value.trim();
     const newQuoteCategory = document.getElementById('newQuoteCategory').value.trim();
@@ -29,13 +36,13 @@ function createAddQuoteForm() {
         return;
     }
 
-    // Add the new quote to the quotes array
+    // Add the new quote using helper function
     addQuote(newQuoteText, newQuoteCategory);
 }
 
-// Helper function to add the quote to the array and update the DOM
+// Function to add a new quote and update the DOM
 function addQuote(text, category) {
-    quotes.push({ text, category });
+    quotes.push({ text, category }); // Add quote to the array
 
     // Provide feedback to the user
     const feedback = document.getElementById('feedback');
@@ -47,13 +54,13 @@ function addQuote(text, category) {
     document.getElementById('newQuoteCategory').value = "";
 }
 
-// Event listener to display a new random quote
+// Event listener to show a new random quote
 document.getElementById('newQuote').addEventListener('click', showRandomQuote);
 
 // Event listener for the "Add Quote" button
 document.getElementById('addQuoteButton').addEventListener('click', createAddQuoteForm);
 
-// Show a random quote on initial page load
+// Show a random quote when the page loads
 document.addEventListener('DOMContentLoaded', () => {
     showRandomQuote();
 });
